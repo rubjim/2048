@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-
 //Constantes
 #define EMPTY 0
 #define BOARD_SIZE 4
@@ -11,27 +10,34 @@
 #define DOWN 's'
 #define NEW_NUMBER 2
 #define WIN 2048
-
 //Definicion de las funciones // 
 void initializeBoard();		//Inicializa el tablero.
 void printBoard();			//Funcion que imprime el tablero.
 void placeNewNumber();		//Funcion que coloca un numero en un lugar libre.
 int checkForFreeSpaces();	//Funcion que retorna 1 si existe al menos un lugar vacio, 0 si no.
-char movement();			//Funcion que mueve y retorna que movimiento se introdujo.
+char movement(int *);		//Funcion que mueve y retorna que movimiento se introdujo.
 int gameOver();				//Determina si el juego finalizo.
-int checkToJoin(char,int);		//Revisa de acuerdo al movimiento si hay fichas para unir y retorna el valor de las fichas unidas.
-
+int checkToJoin(char,int);	//Revisa de acuerdo al movimiento si hay fichas para unir y retorna el valor de las fichas unidas.
+void printHelp();			//Despliega la ayuda del juego
 int board[BOARD_SIZE][BOARD_SIZE];
 
 int main(){
 	int points = 0;
 	int winOrLose = 0;
+	int moveFlag;
+	printf("\t\t######################\n");
+	printf("\t\t------Juego 2048------\n");
+	printf("\t\t######################\n\n");
+	printHelp();
 	initializeBoard();
 	printBoard();
 	while(!(winOrLose = gameOver())){
+		moveFlag = 0;
 		printf("Introduzca su movimiento:");
-		points += checkToJoin(movement(),0);
-		placeNewNumber();
+		points += checkToJoin(movement(&moveFlag),0);
+		if(moveFlag)
+			placeNewNumber();
+		system("clear");
 		printBoard();
 		printf("Puntos: %d\n",points);
 	}
@@ -41,7 +47,13 @@ int main(){
 		printf("Has Perdido!\n");	
 	return 0;
 }	
-
+void printHelp(){
+	printf("El objetivo del juego es unir los numeros hasta obtener una casilla con el numero '2048'\n");
+	printf("Funcionamiento:\n");
+	printf("-> Al mover hacia una direccion se mueven todos los numeros hacia esa direccion.\n");
+	printf("-> Se suman automaticamente los numeros al realizar el movimiento.\n");
+	printf("-> Si es que se pudo realizar algun movimiento, en cada turno se agrega un '2' mas en una casilla aleatoria\n\n");
+}
 void printBoard(){
 	int i,j;
 	printf("*********************************\n");
@@ -95,7 +107,7 @@ int checkForFreeSpaces(){
 	return flag;
 }
 
-char movement(){
+char movement(int * moveFlag){
 	char move;
 	int i,j,flag,aux;//flag es para seguir moviendo hasta el tope.
 	scanf("%c",&move);
@@ -117,6 +129,7 @@ char movement(){
 							board[i][j] = board[i][j-1];
 							board[i][j-1] = aux;
 							flag = 1;
+							*moveFlag = 1;
 						}
 					}
 				}
@@ -133,6 +146,7 @@ char movement(){
 							board[i][j] = board[i][j+1];
 							board[i][j+1] = aux;
 							flag = 1;
+							*moveFlag = 1;
 						}
 					}
 				}
@@ -149,6 +163,7 @@ char movement(){
 							board[i][j] = board[i+1][j];
 							board[i+1][j] = aux;
 							flag = 1;
+							*moveFlag = 1;
 						}
 					}
 				}
@@ -165,13 +180,14 @@ char movement(){
 							board[i][j] = board[i-1][j];
 							board[i-1][j] = aux;
 							flag = 1;
+							*moveFlag = 1;
 						}
 					}
 				}
 			}
 			break;//END CASE DOWN
 		default:
-			printf("No se puede mover en esa direccion\n");
+			printf("No se puede realizar movimiento hacia ese lugar\n");
 			break;//END DEFAULT
 	}
 	return move;
