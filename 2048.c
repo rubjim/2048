@@ -5,11 +5,11 @@
 //Constantes
 #define EMPTY 0
 #define BOARD_SIZE 4
-#define RIGHT 'd';
-#define LEFT 'a';
-#define UP 'w';
-#define DOWN 's';
-#define NEW_NUMBER 2;
+#define RIGHT 'd'
+#define LEFT 'a'
+#define UP 'w'
+#define DOWN 's'
+#define NEW_NUMBER 2
 
 //Definicion de las funciones // 
 void initializeBoard();		//Inicializa el tablero.
@@ -49,6 +49,7 @@ int main(){
 
 void printBoard(){
 	int i,j;
+	printf("*********************************\n");
 	for(j = 0; j < BOARD_SIZE; j++)
 			printf(" _______");
 	printf("\n");
@@ -64,6 +65,7 @@ void printBoard(){
 			printf(" _______");
 		printf("\n");
 	}
+	printf("\n*********************************\n");
 }
 
 void initializeBoard(){
@@ -104,10 +106,12 @@ int checkForFreeSpaces(){
 char movement(){
 	char move;
 	int i,j,flag,aux;//flag es para seguir moviendo hasta el tope.
-	move = getchar();
+	scanf("%c",&move);
+	getchar();
 	while (move != UP && move != DOWN && move != RIGHT && move != LEFT){
 		printf("Tecla invalida, intente de nuevo.");
-		move = getchar();
+		scanf("%c",&move);
+		getchar();
 	}
 	switch (move){
 		case RIGHT:
@@ -115,7 +119,7 @@ char movement(){
 			while (flag){
 				flag = 0;
 				for(i = 0; i < BOARD_SIZE; i++){
-					for(j = BOARD_SIZE; j > 0; j--){
+					for(j = BOARD_SIZE-1; j > 0; j--){
 						if(board[i][j] == EMPTY && board[i][j-1] != EMPTY){
 							aux = board[i][j];
 							board[i][j] = board[i][j-1];
@@ -125,10 +129,58 @@ char movement(){
 					}
 				}
 			}
-		break;//END CASE RIGHT
+			break;//END CASE RIGHT
+		case LEFT:
+			flag = 1;
+			while (flag){
+				flag = 0;
+				for(i = 0; i < BOARD_SIZE; i++){
+					for(j = 0; j < BOARD_SIZE - 1; j++){
+						if(board[i][j] == EMPTY && board[i][j+1] != EMPTY){
+							aux = board[i][j];
+							board[i][j] = board[i][j+1];
+							board[i][j+1] = aux;
+							flag = 1;
+						}
+					}
+				}
+			}
+			break;//END CASE LEFT
+		case UP:
+			flag = 1;
+			while (flag){
+				flag = 0;
+				for(j = 0; j < BOARD_SIZE; j++){
+					for(i = 0; i < BOARD_SIZE - 1; i++){
+						if(board[i][j] == EMPTY && board[i+1][j] != EMPTY){
+							aux = board[i][j];
+							board[i][j] = board[i+1][j];
+							board[i+1][j] = aux;
+							flag = 1;
+						}
+					}
+				}
+			}
+			break;//END CASE UP
+		case DOWN:
+			flag = 1;
+			while (flag){
+				flag = 0;
+				for(j = 0; j < BOARD_SIZE; j++){
+					for(i = BOARD_SIZE - 1; i > 0 ; i--){
+						if(board[i][j] == EMPTY && board[i-1][j] != EMPTY){
+							aux = board[i][j];
+							board[i][j] = board[i-1][j];
+							board[i-1][j] = aux;
+							flag = 1;
+						}
+					}
+				}
+			}
+			break;//END CASE DOWN
 		default:
 			printf("No se puede mover en esa direccion\n");
-		break;//END DEFAULT
+			break;//END DEFAULT
 	}
 	return move;
 }
